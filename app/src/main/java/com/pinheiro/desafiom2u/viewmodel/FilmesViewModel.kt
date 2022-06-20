@@ -20,20 +20,18 @@ import retrofit2.Response
 
 class FilmesViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
 
-    //(private val dispatcher: CoroutineDispatcher = Dispatchers.IO)
-
     private val repository: IFilmesRepository = FilmesRepository(RetrofitClient())
 
-    private val _listarFilmesExibicao: MutableLiveData<List<Result>> = MutableLiveData()
-    var listaFilme: LiveData<List<Result>> = _listarFilmesExibicao
+    private val _listarFilmesExibicao: MutableLiveData<FilmesDTO> = MutableLiveData()
+    var listaFilme: LiveData<FilmesDTO> = _listarFilmesExibicao
 
     fun listarFilmesExibicao() {
 
         viewModelScope.launch(dispatcher) {
-            repository.listarFilmesExbibicao().enqueue(object : Callback<List<Result>> {
+            repository.listarFilmesExbibicao().enqueue(object : Callback<FilmesDTO> {
                 override fun onResponse(
-                    call: Call<List<Result>>,
-                    response: Response<List<Result>>
+                    call: Call<FilmesDTO>,
+                    response: Response<FilmesDTO>
                 ) {
                     if (response.isSuccessful) {
                         response.body()?.let { list ->
@@ -42,8 +40,7 @@ class FilmesViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers.
                     }
                 }
 
-                override fun onFailure(call: Call<List<Result>>, t: Throwable) {
-                    _listarFilmesExibicao.value = listOf()
+                override fun onFailure(call: Call<FilmesDTO>, t: Throwable) {
                     Log.e(FilmesViewModel::class.java.name, t.toString())
                 }
 
